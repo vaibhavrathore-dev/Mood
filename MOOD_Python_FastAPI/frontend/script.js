@@ -31,7 +31,14 @@ function movieCard(movie, {removable = false, onRemove = null} = {}) {
   poster.alt = `${movie.title} poster`;
   poster.loading = 'lazy';
   poster.addEventListener('error', () => {
-    cover.replaceChildren(); cover.textContent = '🎬'; cover.classList.add('poster-fallback');
+    cover.replaceChildren();
+    cover.classList.add('poster-fallback');
+    cover.dataset.genre = movie.genres[0] || 'Drama';
+    const fallback = document.createElement('div'); fallback.className = 'poster-fallback-content';
+    const wordmark = document.createElement('span'); wordmark.className = 'poster-fallback-label'; wordmark.textContent = 'MOOD / CINEMA';
+    const name = document.createElement('strong'); name.textContent = movie.title;
+    const year = document.createElement('span'); year.className = 'poster-fallback-year'; year.textContent = movie.year;
+    fallback.append(wordmark, name, year); cover.append(fallback);
   });
   cover.append(poster); card.append(cover);
   const title = document.createElement('h4'); title.textContent = `${movie.title} (${movie.year})`;
@@ -43,7 +50,7 @@ function movieCard(movie, {removable = false, onRemove = null} = {}) {
   card.append(tags);
   const get = document.createElement('a'); get.className = 'get';
   get.href = `/movie.html?id=${encodeURIComponent(movie.id)}`;
-  get.textContent = 'Get'; card.append(get);
+  get.innerHTML = 'View details <span aria-hidden="true">↗</span>'; card.append(get);
   if (removable) {
     const remove = document.createElement('button'); remove.className = 'secondary-button';
     remove.textContent = 'Remove'; remove.type = 'button';
@@ -72,12 +79,7 @@ function showResults(title, explanation, movies) {
 }
 
 function showHomepageSections(visible) {
-  for (const heading of document.querySelectorAll('h3#section')) {
-    heading.hidden = !visible;
-    if (heading.nextElementSibling?.classList.contains('group')) {
-      heading.nextElementSibling.hidden = !visible;
-    }
-  }
+  for (const section of document.querySelectorAll('.movie-section')) section.hidden = !visible;
 }
 
 async function loadHomepage() {
@@ -90,12 +92,17 @@ async function loadHomepage() {
 
   try {
     const catalog = await request('/movies');
-    for (const heading of document.querySelectorAll('h3#section')) {
-      const group = heading.nextElementSibling;
+    for (const heading of document.querySelectorAll('.section-heading')) {
+      const group = heading.closest('.movie-section')?.querySelector('.group');
       const container = group?.querySelector('.main-card');
       if (container) fillCards(container, catalog.filter(m => m.section === heading.textContent.trim()));
     }
     setStatus(`${catalog.length} movies ready to explore.`);
+    document.querySelectorAll('.genre-pill').forEach(pill => {
+      const genre = new URL(pill.getAttribute('href'), 'http://localhost').searchParams.get('genre');
+      pill.classList.toggle('is-active', genre === selectedGenre);
+      if (genre === selectedGenre) pill.setAttribute('aria-current', 'page');
+    });
     if (selectedGenre) {
       const movies = await request(`/movies?genre=${encodeURIComponent(selectedGenre)}`);
       showHomepageSections(false);
@@ -105,7 +112,16 @@ async function loadHomepage() {
     setStatus(`Could not load the catalog: ${error.message}`);
   }
 
-  searchForm?.addEventListener('submit', event => event.preventDefault());
+  searchForm?.addEventListener('submit', event => {
+    event.preventDefault();
+    document.getElementById('results-panel')?.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === '/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
+      event.preventDefault(); searchBox?.focus();
+    }
+    if (event.key === 'Escape' && document.activeElement === searchBox) searchBox.blur();
+  });
   let searchCount = 0;
   let timer;
   searchBox?.addEventListener('input', () => {
@@ -223,3 +239,10 @@ async function loadWishlist() {
 if (document.body.dataset.page === 'movie') loadMovieDetails();
 else if (document.body.dataset.page === 'wishlist') loadWishlist();
 else if (document.getElementById('recommend-form')) loadHomepage();
+
+// A readable branded cover is visible even when third-party artwork cannot load.
+document.querySelectorAll('.art-poster img').forEach(img => {
+  const hideBrokenImage = () => { img.style.display = 'none'; };
+  img.addEventListener('error', hideBrokenImage);
+  if (img.complete && img.naturalWidth === 0) hideBrokenImage();
+});

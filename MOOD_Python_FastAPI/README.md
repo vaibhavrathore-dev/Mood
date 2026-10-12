@@ -1,6 +1,6 @@
 # MOOD — Movie Recommendation System
 
-A working **Python + FastAPI college project** based on Sanyam's supplied HTML/CSS/JavaScript frontend. The original visual theme and assets are preserved, but search, genre links, recommendations, movie details and guest wishlists are powered by a real API.
+A working **Python + FastAPI college project** based on Sanyam's supplied HTML/CSS/JavaScript frontend. The original MOOD branding and logo are preserved in a redesigned **desktop-first, responsive web interface**. Search, genre links, recommendations, movie details and guest wishlists are powered by a real API.
 
 > **Scope:** a *content-based, rule-driven* recommender. No machine-learning model is claimed. No movie API key, paid service or PostgreSQL setup is required.
 
@@ -25,13 +25,16 @@ A local `mood.db` SQLite database is automatically created and filled from `data
 ## Features
 
 - 36 movies imported from the supplied frontend design into a CSV-backed relational catalog
-- Browse six curated homepage sections
-- Search movie titles and genres (API-powered, with a small debounce)
+- Browse six curated homepage sections in a responsive desktop movie grid
+- Search movie titles and genres from the desktop header (press `/` to focus search)
 - Filter by the seven genre tabs
 - Recommendation form matching *mood and language*, with transparent scoring/filtering
 - Dedicated details page with synopsis, genres, language, and known IMDb rating/director where available
 - Save, list and remove wishlist movies, persisted in SQLite for the browser's guest UUID
 - Interactive OpenAPI docs and automated API tests
+- Featured movie hero, genre filter pills, responsive recommendation sidebar and visually consistent details/watchlist pages
+- Designed for widescreen laptops (1024–1440px) while staying usable on narrow mobile screens
+- Fallback poster artwork when external image sources are unavailable
 
 ## How the recommendation algorithm works
 
@@ -56,11 +59,11 @@ MOOD_Python_FastAPI/
 │   └── seed.py            # Load initial movie CSV
 ├── data/movies.csv        # Editable movie catalog, 36 titles
 ├── frontend/
-│   ├── index.html         # Sanyam's updated homepage
+│   ├── index.html         # Desktop-first responsive homepage
 │   ├── movie.html         # Dynamic movie details
 │   ├── wishlist.html      # Saved movies
 │   ├── script.js          # Calls FastAPI from the browser
-│   ├── style.css          # Original theme, plus functional styling
+│   ├── style.css          # Desktop responsive layout / MOOD theme
 │   └── *.png              # Original frontend image assets
 ├── tests/test_app.py      # API integration tests
 ├── requirements.txt
@@ -125,6 +128,8 @@ There are ten automated tests covering catalog seeding, search, filters, moods, 
 
 `wishlist_items`: compound primary key (`guest_id`, `movie_id`), with `movie_id` referencing `movies.id`. A movie can appear in many guest wishlists, but only once per guest.
 
+The redesigned frontend is plain HTML/CSS/vanilla JS and needs **no Node, npm, React, or separate web server**. Start Uvicorn, and FastAPI serves the site and API at the same address.
+
 The project uses SQLAlchemy ORM and Pydantic schemas; SQLite is used so it runs immediately on a college laptop. To reset the catalog after editing `data/movies.csv`, stop the server, delete the local `mood.db` file, then start the server again (this also resets saved wishlists). The `MOOD_DATABASE_URL` environment variable can point to a different SQLAlchemy-compatible database if the corresponding driver is installed.
 
 ## Viva: quick answers
@@ -147,3 +152,39 @@ The project uses SQLAlchemy ORM and Pydantic schemas; SQLite is used so it runs 
 - **Python API, recommendation logic, database, integration and testing:** backend implementation prepared for the college submission.
 
 Update credits according to your actual team requirements before submitting. This project is a **demonstration**, not a licensed movie streaming or downloading service; **Get** opens movie details, not a film download.
+
+## Desktop previews
+
+The previews below were rendered in Chromium using a simulated API and local fallback artwork (the original remote movie artwork will display when available online):
+
+![Desktop MOOD landing page](docs/desktop-home.png)
+
+![Desktop MOOD browse grid](docs/desktop-browse.png)
+
+![Mobile MOOD landing page](docs/mobile-home.png)
+
+## Desktop layout update (October 2026)
+
+This release turns the earlier mobile-style horizontal shelves into a desktop web layout:
+
+- Sticky header with MOOD logo, navigation, search and watchlist
+- Desktop hero and genre quick filters
+- Responsive three/four-column movie grids; two columns on phones
+- Sticky mood recommendation panel next to movie shelves on desktop; stacked on mobile
+- Unified movie-details and watchlist pages
+- No horizontal page overflow at tested viewports of 1440px, 1024px and 390px
+
+**Compatibility testing:** API tests pass with `python -m pytest -q`. Browser interactions and layout were checked with Chromium using a simulated API because the sandbox blocks live local-browser connections. The API itself was exercised separately using FastAPI's TestClient. Check the site in your own browser at `http://127.0.0.1:8000` before publishing. External movie posters load only when their third-party hosts are reachable.
+
+### Upload to GitHub
+
+Once you've run it locally and verified the appearance, from the project directory:
+
+```bash
+git status
+git add .
+git commit -m "feat: build desktop-first MOOD movie recommendation UI"
+git push origin main
+```
+
+These commands assume the folder is already a Git repository on the `main` branch with an `origin` remote. Otherwise initialize a new Git repository or add a remote first. The database file `mood.db` and virtual environment are excluded by `.gitignore`.

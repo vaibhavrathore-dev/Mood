@@ -84,5 +84,7 @@ def test_wishlist_persists_and_isolated(client):
 def test_frontend_served_by_fastapi(client):
     for url in ['/', '/script.js', '/style.css', '/movie.html', '/wishlist.html', '/logo.png']:
         assert client.get(url).status_code == 200, url
-    assert 'Get Recommendations' in client.get('/').text
+    assert 'id="recommend-form"' in client.get('/').text
+    assert 'class="main-card"' in client.get('/').text
+    assert 'class="hero"' in client.get('/').text
     assert '/api/v1' in client.get('/script.js').text

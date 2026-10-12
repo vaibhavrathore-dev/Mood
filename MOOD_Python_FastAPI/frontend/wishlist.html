@@ -1,20 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>My Wishlist — MOOD</title>
-  <link rel="stylesheet" href="/style.css">
-  <script src="/script.js" defer></script>
-</head>
-<body data-page="wishlist">
-  <div class="logo"><a href="/"><img class="logo-png" src="/logo.png" alt="MOOD home"></a>
-    <a href="/wishlist.html"><img class="wishlist-icon" src="/wishlist_icon.png" alt="Wishlist"></a></div>
-  <div class="back"><a href="/">← Back to movies</a></div>
-  <main class="wishlist-shell">
-    <h1>My Wishlist</h1><p class="results-explanation">Saved movies in this browser's guest collection.</p>
-    <p id="wishlist-status" class="status-message" role="status"></p>
-    <div id="wishlist-grid" class="results-grid"></div>
-  </main>
-  <footer><div class="footer"><p>Mood ©2026</p></div></footer>
-</body></html>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Watchlist — MOOD</title>
+  <meta name="theme-color" content="#101225">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css"><script src="/script.js" defer></script></head>
+<body data-page="wishlist">  <header class="site-header"><div class="header-inner">
+    <a href="/" class="brand" aria-label="MOOD home"><img class="logo-png" src="/logo.png" alt="MOOD"></a>
+    <nav class="primary-nav" aria-label="Main navigation"><a href="/#browse">Explore</a><a href="/#genres">Genres</a><a href="/#recommend">For you</a></nav>
+    <a class="wishlist-link" href="/wishlist.html"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg><span>My Watchlist</span></a>
+  </div></header>
+<div class="page-shell"><a class="back-link" href="/">← Back to movies</a>
+<main class="wishlist-shell"><header class="subpage-heading"><p class="eyebrow small-eyebrow">SAVED FOR LATER</p><h1>My <span style="color:var(--pink)">Watchlist.</span></h1>
+<p>The films you've saved for the perfect night in.</p></header><p id="wishlist-status" class="status-message" role="status"></p>
+<div id="wishlist-grid" class="results-grid"></div></main>  <footer class="site-footer"><div><img src="/logo.png" alt="MOOD"><p>Your next favourite movie is out there.</p></div><span>© 2026 MOOD · MADE FOR THE LOVE OF CINEMA</span></footer></div></body></html>
